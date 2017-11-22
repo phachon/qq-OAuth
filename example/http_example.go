@@ -6,10 +6,6 @@ import (
 	"log"
 )
 
-type HttpHandle struct {
-
-}
-
 var state = qq_OAuth.NewUtils().RandString(8)
 
 // login action

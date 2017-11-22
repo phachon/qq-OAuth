@@ -47,3 +47,12 @@ func (httpHandler *HttpHandle) Callback(res http.ResponseWriter, req *http.Reque
 	// TODO
 }
 ```
+示例：example/http_example.go
+
+## License
+
+MIT
+
+Thanks
+---------
+Create By phachon@163.com
