@@ -1,5 +1,5 @@
 # qq-OAuth
-go 实现的 QQ OAuth2.0 open api
+QQ 第三方登录
 
 # 功能
 实现 QQ OAuth2.0 Open api 封装
