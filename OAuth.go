@@ -17,6 +17,7 @@ type OAuth struct {
 	AppSecret string
 	Callback string
 	Scope string
+	*QC
 }
 
 func NewOAuth(appId string, appSecret string, callback string, scope string) *OAuth {
@@ -25,13 +26,14 @@ func NewOAuth(appId string, appSecret string, callback string, scope string) *OA
 		AppSecret: appSecret,
 		Callback: callback,
 		Scope: scope,
+		&QC{},
 	}
 }
 
-// login action auth code
+// get author url
 // params: state rand string
 // return login url
-func (oAuth *OAuth) AuthCode(state string) string {
+func (oAuth *OAuth) GetAuthorURL(state string) string {
 	value := map[string]string{
 		"response_type": "code",
 		"client_id": oAuth.AppId,
@@ -97,9 +99,25 @@ func (oAuth *OAuth) GetOpenId(accessToken string) (string, error) {
 	if err != nil {
 		return "", nil
 	}
-	if openid, ok := resData["openid"]; ok {
+	openid, ok := resData["openid"];
+	if ok {
 		return openid, nil
 	}else {
 		return "", nil
 	}
+}
+
+// access
+func (oAuth *OAuth) Access(authCode string) error {
+	accessToken, err := oAuth.GetAccessToken(authCode)
+	if err != nil {
+		return err
+	}
+	openId, err := oAuth.GetOpenId(accessToken)
+	if err != nil {
+		return err
+	}
+	oAuth.AccessToken = accessToken
+	oAuth.OpenId = openId
+	return nil
 }
