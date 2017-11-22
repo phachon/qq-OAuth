@@ -60,7 +60,7 @@ func (qc *QC) makeParams(privateParams ...map[string]string) map[string]string {
 		"openid": qc.OpenId,
 	}
 	if len(privateParams) > 0 {
-		for key, value := range privateParams  {
+		for key, value := range privateParams[0]  {
 			params[key] = value
 		}
 	}
@@ -136,7 +136,7 @@ func (qc *QC) ListPhoto(albumId string, format string) (body string, code int, e
 }
 
 // check page fans
-func (qc *QC) CheckPageFans (pageId string, format string) (body string, code int, err error) {
+func (qc *QC) CheckPageFans (format string, pageId string) (body string, code int, err error) {
 	privateParams := map[string]string{
 		"page_id": pageId,
 		"format": strings.ToLower(format),
@@ -171,7 +171,7 @@ func (qc *QC) AddT (format string, content string, clientIp string, longitude st
 }
 
 // delete a weibo
-func (qc *QC) DelT  (format string, id string) (body string, code int, err error) {
+func (qc *QC) DelT (format string, id string) (body string, code int, err error) {
 	privateParams := map[string]string{
 		"format": strings.ToLower(format),
 		"id": id,

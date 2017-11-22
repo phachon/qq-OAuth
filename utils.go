@@ -19,18 +19,8 @@ func NewUtils() *Utils {
 
 // http get request
 func (utils *Utils) HttpGet(queryUrl string, queryValues map[string]string, headerValues map[string]string) (body string, code int, err error) {
-	if !strings.Contains(queryUrl, "?") {
-		queryUrl += "?"
-	}
 
-	queryString := ""
-	for queryKey, queryValue := range queryValues {
-		queryString = queryString + "&" + queryKey + "=" + url.QueryEscape(queryValue)
-	}
-	queryString = strings.Replace(queryString, "&", "", 1)
-	queryUrl += queryString
-
-	req, err := http.NewRequest("GET", queryUrl, nil)
+	req, err := http.NewRequest("GET", utils.QueryBuilder(queryUrl, queryValues), nil)
 	if err != nil {
 		return
 	}
@@ -63,7 +53,6 @@ func (utils *Utils) HttpPost(queryUrl string, queryValues map[string]string, hea
 		queryString = queryString + "&" + queryKey + "=" + url.QueryEscape(queryValue)
 	}
 	queryString = strings.Replace(queryString, "&", "", 1)
-	queryUrl += queryString
 
 	req, err := http.NewRequest("POST", queryUrl, strings.NewReader(queryString))
 	if err != nil {
@@ -102,5 +91,35 @@ func (utils *Utils) RandString(strLen int) string {
 		data[i] = byte(codes[idx])
 	}
 	return string(data)
+}
+
+// build query params
+func (utils *Utils) QueryBuilder(queryUrl string, queryValues map[string]string) string {
+	if !strings.Contains(queryUrl, "?") {
+		queryUrl += "?"
+	}
+
+	queryString := ""
+	for queryKey, queryValue := range queryValues {
+		queryString = queryString + "&" + queryKey + "=" + url.QueryEscape(queryValue)
+	}
+	queryString = strings.Replace(queryString, "&", "", 1)
+	queryUrl += queryString
+
+	return queryUrl
+}
+
+// parse params(name=nick&pass=123)
+func (utils *Utils) ParseString(params string) map[string]string {
+
+	paramsMap := map[string]string{}
+	for _, param := range strings.Split(params, "&") {
+		if ! strings.Contains(param, "=") {
+			continue
+		}
+		paramList :=strings.Split(param,"=")
+		paramsMap[paramList[0]] = paramList[1]
+	}
+	return paramsMap
 }
 
