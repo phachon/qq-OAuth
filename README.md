@@ -25,7 +25,7 @@ func Login(res http.ResponseWriter, req *http.Request) {
 }
 
 // 回调逻辑
-func (httpHandler *HttpHandle) Callback(res http.ResponseWriter, req *http.Request)  {
+func Callback(res http.ResponseWriter, req *http.Request)  {
 	reqState := req.Form.Get("state")
 	if reqState != state {
 	    // 防止 CSRF 攻击
