@@ -1,32 +1,32 @@
 package qq_OAuth
 
 import (
+	"encoding/json"
 	"errors"
 	"strings"
-	"encoding/json"
 )
 
 const (
-	QAuth_Api_AuthCode = "https://graph.qq.com/oauth2.0/authorize"
+	QAuth_Api_AuthCode    = "https://graph.qq.com/oauth2.0/authorize"
 	QAuth_Api_AccessToken = "https://graph.qq.com/oauth2.0/token"
-	QAuth_Api_OpenId = "https://graph.qq.com/oauth2.0/me"
+	QAuth_Api_OpenId      = "https://graph.qq.com/oauth2.0/me"
 )
 
 type OAuth struct {
-	AppId string
+	AppId     string
 	AppSecret string
-	Callback string
-	Scope string
+	Callback  string
+	Scope     string
 	*QC
 }
 
 func NewOAuth(appId string, appSecret string, callback string, scope string) *OAuth {
 	return &OAuth{
-		AppId: appId,
+		AppId:     appId,
 		AppSecret: appSecret,
-		Callback: callback,
-		Scope: scope,
-		&QC{},
+		Callback:  callback,
+		Scope:     scope,
+		QC:        &QC{},
 	}
 }
 
@@ -36,10 +36,10 @@ func NewOAuth(appId string, appSecret string, callback string, scope string) *OA
 func (oAuth *OAuth) GetAuthorURL(state string) string {
 	value := map[string]string{
 		"response_type": "code",
-		"client_id": oAuth.AppId,
-		"redirect_uri": oAuth.Callback,
-		"state": state,
-		"scope": "",
+		"client_id":     oAuth.AppId,
+		"redirect_uri":  oAuth.Callback,
+		"state":         state,
+		"scope":         "",
 	}
 
 	loginUrl := NewUtils().QueryBuilder(QAuth_Api_AuthCode, value)
@@ -49,12 +49,12 @@ func (oAuth *OAuth) GetAuthorURL(state string) string {
 // get access token
 func (oAuth *OAuth) GetAccessToken(authCode string) (string, error) {
 
-	value := map[string]string {
-		"grant_type": "authorization_code",
-		"client_id": oAuth.AppId,
-		"redirect_uri": oAuth.Callback,
+	value := map[string]string{
+		"grant_type":    "authorization_code",
+		"client_id":     oAuth.AppId,
+		"redirect_uri":  oAuth.Callback,
 		"client_secret": oAuth.AppSecret,
-		"code": authCode,
+		"code":          authCode,
 	}
 	response, httpCode, err := NewUtils().HttpGet(QAuth_Api_AccessToken, value, nil)
 	if err != nil {
@@ -69,7 +69,7 @@ func (oAuth *OAuth) GetAccessToken(authCode string) (string, error) {
 	if !ok {
 		if msg, ok := params["msg"]; ok {
 			return "", errors.New(msg)
-		}else {
+		} else {
 			return "", nil
 		}
 	}
@@ -78,7 +78,7 @@ func (oAuth *OAuth) GetAccessToken(authCode string) (string, error) {
 
 // get open id
 func (oAuth *OAuth) GetOpenId(accessToken string) (string, error) {
-	value := map[string]string {
+	value := map[string]string{
 		"access_token": accessToken,
 	}
 	response, httpCode, err := NewUtils().HttpGet(QAuth_Api_OpenId, value, nil)
@@ -99,10 +99,10 @@ func (oAuth *OAuth) GetOpenId(accessToken string) (string, error) {
 	if err != nil {
 		return "", nil
 	}
-	openid, ok := resData["openid"];
+	openid, ok := resData["openid"]
 	if ok {
 		return openid, nil
-	}else {
+	} else {
 		return "", nil
 	}
 }
