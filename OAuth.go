@@ -13,7 +13,6 @@ const (
 )
 
 type OAuth struct {
-	AppId     string
 	AppSecret string
 	Callback  string
 	Scope     string
@@ -22,11 +21,12 @@ type OAuth struct {
 
 func NewOAuth(appId string, appSecret string, callback string, scope string) *OAuth {
 	return &OAuth{
-		AppId:     appId,
 		AppSecret: appSecret,
 		Callback:  callback,
 		Scope:     scope,
-		QC:        &QC{},
+		QC: &QC{
+			AppId: appId,
+		},
 	}
 }
 
@@ -90,8 +90,12 @@ func (oAuth *OAuth) GetOpenId(accessToken string) (string, error) {
 	}
 
 	if strings.Contains(response, "callback") {
-		response = strings.TrimLeft(response, "callback(")
-		response = strings.TrimRight(response, ")")
+		start := strings.Index(response, "(")
+		end := strings.LastIndex(response, ")")
+		if start+1 > end {
+			return "", errors.New("response body error:" + response)
+		}
+		response = response[start+1 : end]
 	}
 
 	var resData map[string]string
